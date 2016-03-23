@@ -1,0 +1,43 @@
+<Page xmlns="http://schemas.nativescript.org/tns.xsd"
+      xmlns:shared="shared" loaded="pageLoaded"
+      xmlns:x="nativescript-statusbar" backgroundSpanUnderStatusBar="true">
+  <StackLayout class="main" stretch="fill">
+    <Label text="todos" class="title" />
+    <GridLayout columns="30, *" rows="auto" class="new-item">
+        <label text="&#xf078;" class="{{ selectAll ? 'icon chevron chevron-bold' : 'icon chevron' }}" tap="{{ toggleSelectAll }}" col="0" />
+        <TextField class="new-item" text="{{ message }}" returnKeyType="done" returnPress="{{ add }}" col="1"/>
+    </GridLayout>
+    <StackLayout class="hr-bold"></StackLayout>
+    <ScrollView>
+        <StackLayout>
+            <Repeater items="{{ todos.view }}">
+                <Repeater.itemTemplate>
+                    <StackLayout>
+                        <GridLayout columns="30, *, auto" rows="auto" class="todo">
+                            <label id="{{ id }}" text="{{ completed ? '&#xf058;' : '&#xf1db;' }}" class="{{ completed ? 'icon circles-completed' : 'icon circles' }}" col="0" tap="check" />
+                            <TextField text="{{ text }}" col="1" class="{{ completed ? 'item completed' : 'item active' }}"></TextField>
+                            <Button id="{{ id }}" text="&#xf00d;" col="2" tap="remove" class="icon remove-button"></Button>
+                        </GridLayout>
+                        <StackLayout class="hr"></StackLayout>
+                    </StackLayout>
+                </Repeater.itemTemplate>        
+            </Repeater>
+            <StackLayout class="summary" visibility="{{ hasThings ? 'visible' : 'collapsed' }}">
+                <GridLayout columns="80, *, 120" class="todo" rows="auto, auto">
+                    <Label text="{{ itemsLeft + ' items left'}}" col="0" />
+                    <Button text="Clear Completed" col="2" tap="{{ clearCompleted }}" />
+                    <SegmentedBar row="1" colspan="3" class="toggles" selectedIndexChanged="filter" selectedBackgroundColor="#B76769">
+                        <SegmentedBar.items>
+                            <SegmentedBarItem title="All" rel="all" />
+                            <SegmentedBarItem title="Active" rel="active" />
+                            <SegmentedBarItem title="Done" rel="done" />
+                        </SegmentedBar.items>
+                    </SegmentedBar>
+                </GridLayout>
+                <StackLayout class="hr"></StackLayout>
+                <shared:stacked-pages />
+            </StackLayout>
+        </StackLayout>
+    </ScrollView>
+  </StackLayout>
+</Page>
