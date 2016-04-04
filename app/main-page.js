@@ -1,36 +1,19 @@
-var _this = this;
 var todo_view_model_1 = require('./view-models/todo-view-model');
-var todo_1 = require('./models/todo');
-var viewModel = new todo_view_model_1.default('');
+var viewModel = new todo_view_model_1.default();
 var pageLoaded = function (args) {
     var page = args.object;
     page.bindingContext = viewModel;
 };
 exports.pageLoaded = pageLoaded;
 var add = function (args) {
-    viewModel.todos.push(new todo_1.default(_this.message));
-    viewModel.set('message', '');
-    viewModel.set('itemsLeft', _this.itemsLeft + 1);
-    viewModel.set('selectAll', false);
+    viewModel.add();
 };
+exports.add = add;
 var remove = function (args) {
-    var v = args.object.parent.parent;
+    // Just getting the todo from the binding context. 
+    // This weird syntax is just casting objects to please the TypeScript compiler. 
     var todo = args.object.bindingContext;
-    v.animate({
-        translate: { x: -10, y: 0 },
-        curve: "easeIn",
-        duration: 100
-    })
-        .then(function () {
-        return v.animate({
-            translate: { x: 1000, y: 0 },
-            curve: "easeIn",
-            duration: 500
-        });
-    })
-        .then(function () {
-        viewModel.remove(todo);
-    });
+    viewModel.remove(todo);
 };
 exports.remove = remove;
 var check = function (args) {
@@ -39,21 +22,17 @@ var check = function (args) {
 };
 exports.check = check;
 var filter = function (args) {
+    // The SegmentedBar emits one event, not a separate event for each button.
+    // We need to find the element that was clicked by it's index
     var segementedbar = args.object;
     var segmentedBarItem = segementedbar.items[args.newIndex];
-    switch (segmentedBarItem.rel) {
-        case 'active': {
-            viewModel.todos.filter({ completed: false });
-            break;
-        }
-        case 'done': {
-            viewModel.todos.filter({ completed: true });
-            break;
-        }
-        default: {
-            viewModel.todos.filter();
-            break;
-        }
+    // We have to use the "get" syntax to please the TypeScript compiler since there is no known "completed" property.
+    var completedState = segmentedBarItem.get('completed');
+    if (completedState == undefined) {
+        viewModel.filter();
+    }
+    else {
+        viewModel.filter({ completed: completedState });
     }
 };
 exports.filter = filter;

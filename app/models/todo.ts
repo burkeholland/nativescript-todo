@@ -5,11 +5,11 @@ class Todo extends Observable {
     id: number;
     text: string;
     completed: boolean = false;
-    parent: Observable;
     
     constructor(text: string) {
         super();
         
+        // we assign each item a unique id by datetime stamp
         this.id = new Date().getTime();
         this.text = text;
     }

@@ -1,81 +1,102 @@
 var observable_1 = require('data/observable');
 var observable_array_1 = require('data/observable-array');
+var local_storage_1 = require('../data/local-storage');
 var todo_1 = require('../models/todo');
-var data_source_1 = require('../shared/data-source');
 var ViewModel = (function (_super) {
     __extends(ViewModel, _super);
-    function ViewModel(message) {
-        var _this = this;
+    function ViewModel() {
         _super.call(this);
-        this.hasThings = true;
+        // control visual state of items in the view, such as the bottom bar, the select all arrow
+        // and the "items left" label
+        this.hasItems = true;
         this.itemsLeft = 0;
-        this.barAll = true;
-        this.barActive = false;
-        this.barDone = false;
         this.selectAll = false;
-        var todos = [
-            new todo_1.default('Install NativeScript'),
-            new todo_1.default('Copy Todo MVC Project'),
-            new todo_1.default('Come Up With Fake Todo Items'),
-            new todo_1.default('Debug In VS Code')
-        ];
-        this.todos = new data_source_1.default(todos, this);
-        this.itemsLeft = this.todos.view.length;
-        this.todos.on(observable_array_1.ObservableArray.changeEvent, function (args) {
-            if (_this.todos.view.length > 0) {
-                _this.set('hasThings', true);
-            }
-            else {
-                _this.set('hasThings', false);
+        // retrieve a collection of all todos from application settings (AKA local storage)
+        // if there is no collection returned, an empty array is used
+        this._allTodos = local_storage_1.default.get('todos') || [];
+        // initialize an observable array that the view will be bound to        
+        this.todos = new observable_array_1.ObservableArray(this._allTodos);
+        // calculate the number of items remaining to be completed
+        this._itemsLeft();
+        // determine if the collection contains any items
+        this._hasItems();
+        // determine the state of the "select all" arrow        
+        this._selectAll();
+    }
+    ViewModel.prototype._itemsLeft = function () {
+        var counter = 0;
+        this._allTodos.forEach(function (todo) {
+            if (!todo.completed) {
+                counter++;
             }
         });
-        this.set('todos', this.todos);
-    }
+        this.set('itemsLeft', counter);
+    };
+    ViewModel.prototype._hasItems = function () {
+        this.set('hasItems', this._allTodos.length > 0);
+    };
+    ViewModel.prototype._selectAll = function () {
+        // if there are still todos, and all of them are marked completed, set selectAll to true.
+        // this stops the select all arrow from being in the wrong state when all items are completed, but the list
+        // has been completely cleared
+        this.set('selectAll', this.hasItems && this.itemsLeft == 0);
+    };
     ViewModel.prototype.add = function () {
-        this.todos.push(new todo_1.default(this.message));
-        this.set('message', '');
-        this.set('itemsLeft', this.itemsLeft + 1);
-        this.set('selectAll', false);
+        if (this.newTodo.trim().length > 0) {
+            this._allTodos.push(new todo_1.default(this.newTodo.trim()));
+            this.set('newTodo', '');
+            this._refresh();
+        }
     };
     ViewModel.prototype.remove = function (todo) {
-        this.todos.remove(todo);
-        this.set('itemsLeft', this.itemsLeft - 1);
+        var index = this._allTodos.indexOf(todo);
+        this._allTodos.splice(index, 1);
+        this._refresh();
     };
     ViewModel.prototype.check = function (todo) {
-        if (todo.completed) {
-            todo.set('completed', false);
-            this.set('itemsLeft', this.itemsLeft--);
-        }
-        else {
-            todo.set('completed', true);
-            this.set('itemsLeft', this.itemsLeft++);
-        }
-        this.todos.set('completed', todo);
-    };
-    ViewModel.prototype.clearThenSetSelected = function (property) {
-        this.set('barAll', false);
-        this.set('barActive', false);
-        this.set('barDone', false);
-        this.set("bar" + property, true);
-    };
-    ViewModel.prototype.updateBar = function (arg) {
-        this.clearThenSetSelected(arg);
-    };
-    ViewModel.prototype.toggleSelectAll = function () {
-        var _this = this;
-        this.set('selectAll', !this.selectAll);
-        this.todos.data.forEach(function (todo) {
-            _this.selectAll ? todo.set('completed', true) : todo.set('completed', false);
-        });
-        this.set('itemsLeft', !this.selectAll ? this.todos.data.length : 0);
+        todo.set('completed', !todo.completed);
+        this._refresh();
     };
     ViewModel.prototype.clearCompleted = function () {
-        var activeTodos = this.todos.data.filter(function (thing, index) {
+        var activeTodos = this._allTodos.filter(function (thing, index) {
             return !thing.completed;
         });
-        this.todos.reset(activeTodos);
+        this._allTodos = activeTodos;
+        this._refresh();
     };
-    ViewModel.prototype.filter = function () {
+    ViewModel.prototype.filter = function (filter) {
+        // store the filter that was passed in. it may be null.
+        this._filter = filter;
+        // if a valid filter was passed in and not null or undefined
+        if (filter) {
+            // filter out the items in the array that match the filter condition        
+            var filteredItems = this._allTodos.filter(function (item) {
+                for (var key in filter) {
+                    if (item[key] == filter[key]) {
+                        return true;
+                    }
+                }
+            });
+            // splicing the todos collection empties it so that it can be repopulated with only
+            // the filtered items
+            this.todos.splice(0, this.todos.length);
+            this.todos.push(filteredItems);
+        }
+        else {
+            // clear the todos array and reset it to be the same as the _allTodos true collection
+            this.todos.splice(0, this.todos.length);
+            this.todos.push(this._allTodos);
+        }
+    };
+    ViewModel.prototype._refresh = function () {
+        // this method is called virtually every time something on the model changes. This is done
+        // so that the true collection (_allTodos) and the filtered collection (todos) stay in sync.
+        this.filter(this._filter);
+        local_storage_1.default.set('todos', this._allTodos);
+        // reset some of the visual state that requires computation
+        this._hasItems();
+        this._itemsLeft();
+        this._selectAll();
     };
     return ViewModel;
 })(observable_1.Observable);

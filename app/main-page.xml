@@ -5,12 +5,12 @@
     <Label text="todos" class="title" />
     <GridLayout columns="30, *" rows="auto" class="new-item">
         <label text="&#xf078;" class="{{ selectAll ? 'icon chevron chevron-bold' : 'icon chevron' }}" tap="{{ toggleSelectAll }}" col="0" />
-        <TextField class="new-item" text="{{ message }}" returnKeyType="done" returnPress="{{ add }}" col="1"/>
+        <TextField class="new-item" text="{{ newTodo }}" returnKeyType="done" returnPress="add" col="1"/>
     </GridLayout>
     <StackLayout class="hr-bold"></StackLayout>
-    <ScrollView>
+    <ScrollView id="main">
         <StackLayout>
-            <Repeater items="{{ todos.view }}">
+            <Repeater items="{{ todos }}">
                 <Repeater.itemTemplate>
                     <StackLayout>
                         <GridLayout columns="30, *, auto" rows="auto" class="todo">
@@ -22,15 +22,15 @@
                     </StackLayout>
                 </Repeater.itemTemplate>        
             </Repeater>
-            <StackLayout class="summary" visibility="{{ hasThings ? 'visible' : 'collapsed' }}">
+            <StackLayout class="summary" visibility="{{ hasItems ? 'visible' : 'collapsed' }}">
                 <GridLayout columns="80, *, 120" class="todo" rows="auto, auto">
                     <Label text="{{ itemsLeft + ' items left'}}" col="0" />
                     <Button text="Clear Completed" col="2" tap="{{ clearCompleted }}" />
                     <SegmentedBar row="1" colspan="3" class="toggles" selectedIndexChanged="filter" selectedBackgroundColor="#B76769">
                         <SegmentedBar.items>
-                            <SegmentedBarItem title="All" rel="all" />
-                            <SegmentedBarItem title="Active" rel="active" />
-                            <SegmentedBarItem title="Done" rel="done" />
+                            <SegmentedBarItem title="All" />
+                            <SegmentedBarItem title="Active" completed="false" />
+                            <SegmentedBarItem title="Done" completed="true" />
                         </SegmentedBar.items>
                     </SegmentedBar>
                 </GridLayout>
