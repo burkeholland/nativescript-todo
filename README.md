@@ -26,10 +26,10 @@ or
 tns run android --emulator
 ````
 
-![Todos Screenshot]("https://cdn.rawgit.com/burkeholland/nativescript-todo/master/images/todo-screenshot.png")
+![Todos Screenshot](https://cdn.rawgit.com/burkeholland/nativescript-todo/master/images/todo-screenshot.png)
 
 And now in action...
 
-![Todos In Action]("https://cdn.rawgit.com/burkeholland/nativescript-todo/master/images/nativescript-todo.gif");
+![Todos In Action](https://cdn.rawgit.com/burkeholland/nativescript-todo/master/images/nativescript-todo.gif)
 
 
