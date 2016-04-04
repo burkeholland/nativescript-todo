@@ -1,6 +1,6 @@
 import { EventData, Observable } from 'data/observable';
 import { ObservableArray } from 'data/observable-array';
-import localStorage from '../data/local-storage';
+import TodosService from '../services/todos-service';
 import Todo from '../models/todo';
 
 class ViewModel extends Observable {
@@ -28,7 +28,7 @@ class ViewModel extends Observable {
 
         // retrieve a collection of all todos from application settings (AKA local storage)
         // if there is no collection returned, an empty array is used
-        this._allTodos = localStorage.get('todos') || [];
+        this._allTodos = TodosService.get('todos');
 
         // initialize an observable array that the view will be bound to        
         this.todos = new ObservableArray<Todo>(this._allTodos);
@@ -97,6 +97,14 @@ class ViewModel extends Observable {
         this._refresh();
     }
     
+    toggleSelectAll() {
+        this._allTodos.forEach((todo) => {
+           todo.set('completed', !this.selectAll); 
+        });
+        
+        this._refresh();
+    }
+    
     filter(filter?: Object) {
         
         // store the filter that was passed in. it may be null.
@@ -133,7 +141,7 @@ class ViewModel extends Observable {
 
         this.filter(this._filter);
         
-        localStorage.set('todos', this._allTodos);
+        TodosService.set('todos', this._allTodos);
         
         // reset some of the visual state that requires computation
         

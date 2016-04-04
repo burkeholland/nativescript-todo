@@ -1,6 +1,6 @@
 var observable_1 = require('data/observable');
 var observable_array_1 = require('data/observable-array');
-var local_storage_1 = require('../data/local-storage');
+var todos_service_1 = require('../services/todos-service');
 var todo_1 = require('../models/todo');
 var ViewModel = (function (_super) {
     __extends(ViewModel, _super);
@@ -13,7 +13,7 @@ var ViewModel = (function (_super) {
         this.selectAll = false;
         // retrieve a collection of all todos from application settings (AKA local storage)
         // if there is no collection returned, an empty array is used
-        this._allTodos = local_storage_1.default.get('todos') || [];
+        this._allTodos = todos_service_1.default.get('todos');
         // initialize an observable array that the view will be bound to        
         this.todos = new observable_array_1.ObservableArray(this._allTodos);
         // calculate the number of items remaining to be completed
@@ -64,6 +64,13 @@ var ViewModel = (function (_super) {
         this._allTodos = activeTodos;
         this._refresh();
     };
+    ViewModel.prototype.toggleSelectAll = function () {
+        var _this = this;
+        this._allTodos.forEach(function (todo) {
+            todo.set('completed', !_this.selectAll);
+        });
+        this._refresh();
+    };
     ViewModel.prototype.filter = function (filter) {
         // store the filter that was passed in. it may be null.
         this._filter = filter;
@@ -92,7 +99,7 @@ var ViewModel = (function (_super) {
         // this method is called virtually every time something on the model changes. This is done
         // so that the true collection (_allTodos) and the filtered collection (todos) stay in sync.
         this.filter(this._filter);
-        local_storage_1.default.set('todos', this._allTodos);
+        todos_service_1.default.set('todos', this._allTodos);
         // reset some of the visual state that requires computation
         this._hasItems();
         this._itemsLeft();
