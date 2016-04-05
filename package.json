@@ -1,15 +1,18 @@
 {
-  "nativescript": {
-    "id": "org.nativescript.nativescripttodo",
-    "tns-ios": {
-      "version": "1.6.0"
-    }
-  },
-  "dependencies": {
-    "tns-core-modules": "1.6.0"
-  },
-  "devDependencies": {
-    "nativescript-dev-typescript": "^0.3.0",
-    "typescript": "^1.7.5"
-  }
+	"nativescript": {
+		"id": "org.nativescript.nativescripttodo",
+		"tns-ios": {
+			"version": "1.7.1"
+		},
+		"tns-android": {
+			"version": "1.7.1"
+		}
+	},
+	"dependencies": {
+		"tns-core-modules": "1.7.1"
+	},
+	"devDependencies": {
+		"nativescript-dev-typescript": "^0.3.0",
+		"typescript": "^1.7.5"
+	}
 }
