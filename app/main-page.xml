@@ -16,16 +16,16 @@
                         <GridLayout columns="30, *, auto" rows="auto" class="todo">
                             <label id="{{ id }}" text="{{ completed ? '&#xf058;' : '&#xf1db;' }}" class="{{ completed ? 'icon circles-completed' : 'icon circles' }}" col="0" tap="check" />
                             <TextField text="{{ text }}" col="1" class="{{ completed ? 'item completed' : 'item active' }}"></TextField>
-                            <Button id="{{ id }}" text="&#xf00d;" col="2" tap="remove" class="icon remove-button"></Button>
+                            <Button id="{{ id }}" text="&#xf00d;" col="2" tap="remove" ios:class="icon remove-button" android:class="icon remove-button button-android" ></Button>
                         </GridLayout>
                         <StackLayout class="hr"></StackLayout>
                     </StackLayout>
                 </Repeater.itemTemplate>        
             </Repeater>
             <StackLayout class="summary" visibility="{{ hasItems ? 'visible' : 'collapsed' }}">
-                <GridLayout columns="80, *, 120" class="todo" rows="auto, auto">
+                <GridLayout columns="80, *, 160" class="todo" rows="auto, auto">
                     <Label text="{{ itemsLeft + ' items left'}}" col="0" />
-                    <Button text="Clear Completed" col="2" tap="{{ clearCompleted }}" />
+                    <Button text="Clear Completed" col="2" tap="{{ clearCompleted }}" android:class="button-android"/>
                     <SegmentedBar row="1" colspan="3" class="toggles" selectedIndexChanged="filter" selectedBackgroundColor="#B76769">
                         <SegmentedBar.items>
                             <SegmentedBarItem title="All" />

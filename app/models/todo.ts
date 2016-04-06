@@ -2,7 +2,7 @@ import { EventData, Observable } from 'data/observable';
 import { ObservableArray } from 'data/observable-array'; 
 
 class Todo extends Observable {
-    id: number;
+    // id: number;
     text: string;
     completed: boolean = false;
     
@@ -10,7 +10,7 @@ class Todo extends Observable {
         super();
         
         // we assign each item a unique id by datetime stamp
-        this.id = new Date().getTime();
+        // this.id = new Date().getTime();
         this.text = text;
     }
 }

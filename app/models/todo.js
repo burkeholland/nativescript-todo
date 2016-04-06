@@ -5,7 +5,7 @@ var Todo = (function (_super) {
         _super.call(this);
         this.completed = false;
         // we assign each item a unique id by datetime stamp
-        this.id = new Date().getTime();
+        // this.id = new Date().getTime();
         this.text = text;
     }
     return Todo;
