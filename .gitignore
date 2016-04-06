@@ -2,3 +2,6 @@ platforms
 node_modules
 hooks
 lib
+
+**/*.js
+**/*.map
