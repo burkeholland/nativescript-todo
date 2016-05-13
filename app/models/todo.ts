@@ -1,5 +1,4 @@
 import { EventData, Observable } from 'data/observable';
-import { ObservableArray } from 'data/observable-array'; 
 
 class Todo extends Observable {
     // id: number;
@@ -16,3 +15,5 @@ class Todo extends Observable {
 }
 
 export default Todo;
+
+

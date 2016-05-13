@@ -3,7 +3,8 @@
 }
 
 button {
-    
+    margin: 0;
+    padding: 0;
 }
 
 .icon {
@@ -30,16 +31,6 @@ button {
 
 .main {
     margin: 0 10 0 10;
-}
-
-.main button-android {
-    background-color: white;
-}
-
-.button-android {
-    border-color: white;
-    border-width: 1;
-    margin: -20 -30 -10 0;
 }
 
 .todo {
@@ -99,6 +90,10 @@ button {
 
 .middle {
     horizontal-align: center;
+}
+
+.right {
+    text-align: right;
 }
 
 .padded {

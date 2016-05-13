@@ -4,13 +4,13 @@
   <StackLayout class="main" stretch="fill">
     <Label text="todos" class="title" />
     <GridLayout columns="30, *" rows="auto" class="new-item">
-        <label text="&#xf078;" class="{{ selectAll ? 'icon chevron chevron-bold' : 'icon chevron' }}" tap="{{ toggleSelectAll }}" col="0" />
+        <label text="&#xf078;" class="{{ selectAll ? 'icon chevron chevron-bold' : 'icon chevron' }}" tap="toggleSelectAll" col="0" />
         <TextField class="new-item" text="{{ newTodo }}" returnKeyType="done" returnPress="add" col="1"/>
     </GridLayout>
     <StackLayout class="hr-bold"></StackLayout>
     <ScrollView id="main">
         <StackLayout>
-            <Repeater items="{{ todos }}">
+            <Repeater items="{{ todos | filterCompleted() }}">
                 <Repeater.itemTemplate>
                     <StackLayout>
                         <GridLayout columns="30, *, auto" rows="auto" class="todo">
@@ -22,10 +22,10 @@
                     </StackLayout>
                 </Repeater.itemTemplate>        
             </Repeater>
-            <StackLayout class="summary" visibility="{{ hasItems ? 'visible' : 'collapsed' }}">
+            <StackLayout class="summary" visibility="{{ hasItems() ? 'visible' : 'collapsed' }}">
                 <GridLayout columns="80, *, 160" class="todo" rows="auto, auto">
-                    <Label text="{{ itemsLeft + ' items left'}}" col="0" />
-                    <Button text="Clear Completed" col="2" tap="{{ clearCompleted }}" android:class="button-android"/>
+                    <Label text="{{ itemsLeft() + ' items left'}}" col="0" />
+                    <Button text="Clear Completed" col="2" tap="{{ clearCompleted }}" android:class="button" class="right"/>
                     <SegmentedBar row="1" colspan="3" class="toggles" selectedIndexChanged="filter" selectedBackgroundColor="#B76769">
                         <SegmentedBar.items>
                             <SegmentedBarItem title="All" />

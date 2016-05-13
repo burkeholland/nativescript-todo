@@ -30,22 +30,18 @@ let check = (args: EventData) => {
     viewModel.check(todo);
 }
 
+let toggleSelectAll = () => {
+    viewModel.toggleSelectAll();
+}
+
 let filter = (args: any) => {
     
     // The SegmentedBar emits one event, not a separate event for each button.
     // We need to find the element that was clicked by it's index
     var segementedbar = <SegmentedBar>args.object;
     var segmentedBarItem = segementedbar.items[args.newIndex];
-    
-    // We have to use the "get" syntax to please the TypeScript compiler since there is no known "completed" property.
-    var completedState = <boolean>segmentedBarItem.get('completed');
-    
-    if (completedState == undefined) {
-        viewModel.filter();    
-    }
-    else {
-        viewModel.filter({ completed: completedState });
-    }
+
+    viewModel.set('theFilter', segmentedBarItem.get('completed'));
 }
 
-export { pageLoaded, add, remove, filter, check }
+export { pageLoaded, add, remove, filter, check, toggleSelectAll }
