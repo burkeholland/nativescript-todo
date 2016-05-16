@@ -1,16 +1,14 @@
 import { EventData, Observable } from 'data/observable';
 
 class Todo extends Observable {
-    // id: number;
     text: string;
     completed: boolean = false;
     
-    constructor(text: string) {
+    constructor(text: string, completed: boolean = false) {
         super();
-        
-        // we assign each item a unique id by datetime stamp
-        // this.id = new Date().getTime();
+
         this.text = text;
+        this.completed = completed
     }
 }
 

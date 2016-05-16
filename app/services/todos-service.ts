@@ -10,7 +10,7 @@ let TodosService = {
             let rawTodos = <Array<Todo>>JSON.parse(value);
             // we need to convert these raw todos into observables
             rawTodos.forEach((todo) => {
-                result.push(new Todo(todo.text));
+                result.push(new Todo(todo.text, todo.completed));
             });
             return result;
         }
@@ -18,7 +18,8 @@ let TodosService = {
     },   
     
     set: (key: string, value: ObservableArray<Todo>) => {
-        localStorage.setItem(key, JSON.stringify(value));   
+        let todosArray = value.filter(() => { return true });
+        localStorage.setItem(key, JSON.stringify(todosArray));   
     }
 }
 

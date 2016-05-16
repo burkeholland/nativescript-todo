@@ -1,4 +1,4 @@
-import { EventData, Observable } from 'data/observable';
+import { Observable } from 'data/observable';
 import { ObservableArray } from 'data/observable-array';
 import TodosService from '../services/todos-service';
 import Todo from '../models/todo';
@@ -13,12 +13,18 @@ class ViewModel extends Observable {
     constructor() {
         super();
 
-        // initialize an observable array that the view will be bound to        
+        // Initialize an observable array that the view will be bound to.        
         this.todos = new ObservableArray<Todo>(TodosService.get('todos'));
     }
     
     private _update() {
+        // Save the todo state to local storage.
         TodosService.set('todos', this.todos);
+        
+        // Trigger a UI update since changing an item in the toodo location
+        // will not trigger this automatically. The name of the event and argument
+        // passed are irrelevant.
+        this.notifyPropertyChange('todos-change', null);
     }
     
     add() {
@@ -35,19 +41,33 @@ class ViewModel extends Observable {
         var index = this.todos.indexOf(todo);
         this.todos.splice(index, 1);
         
-        // It seems that simply modifying the collection won't trigger an update
-        // so we have to do it manually. Hope there is a better way.
-        this.notifyPropertyChange('remove', todo);
-        
         this._update();
     }
     
     check(todo: Todo) {
         todo.set('completed', !todo.completed);   
+                
+        this._update();
+    }
+    
+    clearCompleted() {
+        var activeTodos = this.todos.filter((todo: Todo) => {
+            if (todo.completed == false) {
+                return true;
+            }
+        });
         
-        // It seems that simply modifying the collection won't trigger an update
-        // so we have to do it manually. Hope there is a better way.
-        this.notifyPropertyChange('check', todo);
+        this.set('todos', activeTodos);
+          
+        this._update();
+    }
+    
+    toggleSelectAll() {
+        this.todos.forEach((todo) => {
+           todo.set('completed', !this.selectAll); 
+        });
+        
+        this.set('selectAll', !this.selectAll);
         
         this._update();
     }
@@ -64,27 +84,17 @@ class ViewModel extends Observable {
         return this.todos.length > 0;
     }
     
-    clearCompleted() {
-        this.todos.forEach((todo: Todo, index: number) => {
+    hasCompletedItems() {
+        return this.todos.some((todo: Todo) => {
             if (todo.completed) {
-                this.todos.splice(index, 1);
+                return true;
             }
-        });
-        
-        this._update();
-    }
-    
-    toggleSelectAll() {
-        this.todos.forEach((todo) => {
-           todo.set('completed', !this.selectAll); 
-        });
-        
-        this.set('selectAll', !this.selectAll);
+        })
     }
     
     filterCompleted = {
         toView: (todos: ObservableArray<Todo>) => {            
-            let filteredTodos = this.todos.filter((todo: Todo) => {
+            let filteredTodos = todos.filter((todo: Todo) => {
                 if (this.theFilter == undefined) {
                     return true;
                 }
